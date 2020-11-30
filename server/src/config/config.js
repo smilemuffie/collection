@@ -3,7 +3,7 @@ module.exports = {
     db: {
         database: process.env.DB_NAME || 'collection',
         user: process.env.DB_USER || 'postgres',
-        password: process.env.DB_PASS || '12345678',
+        password: process.env.DB_PASS || 'shin.1412', // local 12345678
         options: {
             dialect: process.env.DIALECT || 'postgres',
             host: process.env.HOST || 'localhost'
