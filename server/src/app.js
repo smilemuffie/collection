@@ -5,12 +5,14 @@ const morgan = require('morgan')
 const config = require('./config/config')
 const db = require('./model')
 const router = require('./routes')
+const path = require('path')
 
 
 const app = express()
 app.use(morgan('combined'))
 app.use(bodyParser.urlencoded({ extended: true}))
 app.use(bodyParser.json())
+app.use(express.static(path.join(__dirname, 'public')))
 app.use(cors())
 
 app.use('/api', router)
