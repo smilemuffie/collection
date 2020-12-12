@@ -49,21 +49,27 @@ module.exports = {
 
             let collection
             let error
+            // 先找该email是否已经预订过了
+            const isExist = await db.collectionModel.findOne({
+                where: {
+                    email
+                }
+            })
 
-            if (id) {
+            if (isExist) {
+                console.log('edit 编辑')
                 collection = await db.collectionModel.update(obj,{
                     where: {
-                        id
+                        email
                     }
                 })
                 error = '编辑预订信息成功'
+                
             } else {
+                console.log('create')
                 collection = await db.collectionModel.create(obj)
                 error = '创建预订信息成功'
-                
             }
-
-            console.log(collection)
 
             return res.status(200).json({
                 err_no: ERR.SUCCESS,

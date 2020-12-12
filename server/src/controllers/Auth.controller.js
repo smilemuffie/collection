@@ -62,7 +62,7 @@ module.exports = {
                 token: jwtSignUser(data)
             })
         } catch (err) {
-            return res.status(500).json({
+            return res.status(200).json({
                 err_no: ERR.BAD_REQUEST,
                 error: '登录失败，请重新登录'
             })
@@ -72,8 +72,16 @@ module.exports = {
 
         // 判断有没有重复注册
         const {
-            email
+            email,
+            password
         } = req.body
+
+        if (!email || !password) {
+            return res.status(200).json({
+                err_no: ERR.BAD_REQUEST,
+                error: '注册信息缺失'
+            })
+        }
 
         try {
 
@@ -91,7 +99,13 @@ module.exports = {
                 })
             }
 
-            const user = await db.userModel.create(req.body)
+            const newUser = {
+                email,
+                password,
+                isAdmin: false
+            }
+
+            const user = await db.userModel.create(newUser)
             const data = user.toJSON()
             return res.status(200).send({
                 err_no: ERR.SUCCESS,
@@ -110,16 +124,120 @@ module.exports = {
         try {
             const users = await db.userModel.findAll({})
             const userList = users.map(user => user.dataValues)
-            const data = userList.map(user => user.email)
+            // const data = userList.map(user => user.email)
+
+            // 获取user的预订信息
+            const collections = await db.collectionModel.findAll({});
+            const collectionList = collections.map(collection => collection.dataValues);
+            
+            userList.map(user => {
+                const arr = collectionList.filter(collection => user.email === collection.email);
+                user.booked = !!arr.length;
+                
+            })
+
+            const data = userList.map(user => ({
+               email: user.email,
+               booked: user.booked
+            }))
 
             return res.status(200).send({
                 err_no: ERR.SUCCESS,
+                error: '获取用户列表成功',
                 data
             })
         } catch (err) {
-            return res.status(400).send({
+            return res.status(200).send({
                 err_no: ERR.FAILURE,
                 error: '获取email列表失败'
+            })
+        }
+
+    },
+
+    async setAdmin(req, res) {
+        const {email, setcode} = req.body;
+
+        if (setcode !== 'meeting') {
+            return res.status(200).send({
+                err_no: ERR.FAILURE,
+                error: 'setcode错误！无法设置'
+            })
+        }
+
+        if (!email) {
+            return res.status(200).send({
+                err_no: ERR.FAILURE,
+                error: '请提供需要设置的email'
+            })
+        }
+        try {
+
+            const findUser = await db.userModel.findOne({
+                where: {
+                    email: email
+                }
+            })
+
+            console.log(findUser);
+            if (findUser) {
+                await db.userModel.update({isAdmin: true}, {
+                    where: {
+                        email
+                    }
+                })
+
+                return res.status(200).send({
+                    err_no: ERR.SUCCESS,
+                    error: 'admin设置成功'
+                })
+            }
+
+        } catch (err) {
+            return res.status(200).send({
+                err_no: ERR.FAILURE,
+                error: 'admin设置失败，请重新尝试'
+            })
+        }
+    },
+
+    async getUserByEmail(req, res) {
+        const {email} = req.query;
+
+        if (!email) {
+            return res.status(200).send({
+                err_no: ERR.FAILURE,
+                error: '请提供email'
+            })
+        }
+
+        try {
+
+            const findUser = await db.userModel.findOne({
+                where: {
+                    email: email
+                }
+            })
+
+            console.log(findUser);
+            if (!findUser)  {
+                 return res.status(200).send({
+                     err_no: ERR.FAILURE,
+                     error: '该用户不存在'
+                 })
+            }
+
+            return res.status(200).send({
+                err_no: ERR.SUCCESS,
+                error: '获取到该用户信息',
+                data: findUser
+            })
+
+
+        } catch (err) {
+            return res.status(200).send({
+                err_no: ERR.FAILURE,
+                error: '获取角色信息失败'
             })
         }
 

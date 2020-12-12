@@ -15,6 +15,12 @@ router.route(`/auth/login`)
     // 登录
     .post(AuthController.login)
 
+router.route(`/auth/admin`)
+    // 设置admin
+    .post(AuthController.setAdmin)
+    // 获取角色信息
+    .get(AuthController.getUserByEmail)
+
 router.route(`/allUsers`)
     // 获取用户列表
     .get(AuthController.getUsers)

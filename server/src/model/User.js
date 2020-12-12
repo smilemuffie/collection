@@ -24,7 +24,8 @@ module.exports = (sequelize, Sequelize) => {
             type: Sequelize.STRING,
             unique: true
         },
-        password: Sequelize.STRING
+        password: Sequelize.STRING,
+        isAdmin: Sequelize.BOOLEAN
     }
     // , {
     //     hooks: {
