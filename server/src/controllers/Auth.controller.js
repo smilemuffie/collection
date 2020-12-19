@@ -138,9 +138,11 @@ module.exports = {
 
             const data = userList.map(user => ({
                email: user.email,
-               booked: user.booked
+               booked: user.booked,
+               isAdmin: user.isAdmin
             }))
 
+            console.log(data)
             return res.status(200).send({
                 err_no: ERR.SUCCESS,
                 error: '获取用户列表成功',

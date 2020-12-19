@@ -14,7 +14,7 @@ app.use(bodyParser.urlencoded({ extended: true}))
 app.use(bodyParser.json())
 app.use(express.static(path.join(__dirname, 'public')))
 app.use(cors({
-    "origin": "http://meeting.stable-graphene.com",
+    "origin": "*",
     "methods": "GET,HEAD,PUT,PATCH,POST,DELETE",
     "preflightContinue": false,
     "optionsSuccessStatus": 204
