@@ -138,8 +138,8 @@ module.exports = {
 
             const data = userList.map(user => ({
                email: user.email,
-               booked: user.booked,
-               isAdmin: user.isAdmin
+               booked: user.booked
+            //    isAdmin: user.isAdmin
             }))
 
             console.log(data)
