@@ -25,7 +25,10 @@ module.exports = (sequelize, Sequelize) => {
             unique: true
         },
         password: Sequelize.STRING,
-        isAdmin: Sequelize.BOOLEAN
+        isAdmin: {
+            type: Sequelize.BOOLEAN,
+            defaultValue: false
+        }
     }
     // , {
     //     hooks: {
